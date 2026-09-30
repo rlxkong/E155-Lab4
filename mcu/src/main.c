@@ -132,16 +132,35 @@ const int notes[][2] = {
 {  0,	0}};
 
 int main(void) {
+  configureFlash();
+
   // Turn on clock to GPIOB
   RCC->AHB2ENR |= (1 << 1);
+
+  // initialize duration and pitch
+  enableDuration();
+  enablePitch();
 
   // Set PIN_OUT as output
   pinMode(PIN_OUT, GPIO_OUTPUT);
 
-  // Blink LED
-  while(1) {
-      togglePin(PIN_OUT);
+  // Output notes as waves
+  int score_length = sizeof(notes)/sizeof(notes[0]);
+  for(int i = 0; i < score_length; i++){
+    // play each note for a given duration
+    runDuration(notes[i][1]);
+
+    // check that SR is 0 meaning no interrupt is pending
+    while (!((TIM6->SR >> 0) & 1)){
+      // play the corresponding frequency
+      runPitch(notes[i][0]);
+      while (!((TIM7->SR >> 0) & 1)){
+        // output note
+        togglePin(PIN_OUT);
+      }
+    }
   }
+
   return 0;
 	
 }

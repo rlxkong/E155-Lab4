@@ -32,7 +32,7 @@ void enablePitch(void) {
 void runPitch(int frequency) {
     uint32_t note_count = 0;
 
-    if (frequnecy != 0){
+    if (frequency != 0){
         note_count = 4000000 / (2 * frequency);
     }
 

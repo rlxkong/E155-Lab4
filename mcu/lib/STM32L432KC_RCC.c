@@ -3,46 +3,50 @@
 
 #include "STM32L432KC_RCC.h"
 
-// Part 1
-void enableHSI16(void) {
-  // Turn on the HSI16 oscillator
-  RCC->CR |= (1 << 8);
-  //  Wait until the hardware reports that HSI16 is ready (stable)
-  while ((RCC->CR >> 10 & 1) != 0);
+void configurePLL(void) {
+    // Set clock to 80 MHz
+    // Output freq = (src_clk) * (N/M) / R
+    // (4 MHz) * (N/M) / R = 80 MHz
+    // M:1, N: 80, R: 4
+    // Use MSI as PLLSRC
+
+    // TODO: Turn off PLL
+    RCC->CR &= ~(1<<24); //sets 24th bit to 0
+    
+    // TODO: Wait till PLL is unlocked (e.g., off)
+    while ((RCC->CR >> 25) & 1);
+
+    // Load configuration
+    // TODO: Set PLL SRC to MSI
+    RCC->PLLCFGR &= ~(1<<1); // bit[1] is 0
+    RCC->PLLCFGR |= (1<<0); // bit[0] is 1
+
+    // TODO: Set PLLN
+    RCC->PLLCFGR &= ~(0b11111111 << 8); // Clear all bits of PLLN
+    RCC->PLLCFGR |= (0b1010000 << 8); // |= 80
+
+    // TODO: Set PLLM
+    RCC->PLLCFGR &= ~(0b111 << 4);
+
+    // TODO: Set PLLR
+    RCC->PLLCFGR &= ~(1 << 26);
+    RCC->PLLCFGR |= (1 << 25);
+    
+    // TODO: Enable PLLR output
+    RCC->PLLCFGR |= (1 << 24);
+
+    // TODO: Enable PLL
+    RCC->CR |= (1<<24);
+    
+    // TODO: Wait until PLL is locked
+    while (!((RCC->CR >> 25) & 1));
 }
 
-// Part 1
-void selectSysclk(uint32_t sw) {
-  // Write sw into the SW field of RCC_CFGR, leaving the other bits alone
-  RCC->CFGR |= (sw << 0);
-  // Wait until SWS reports that the switch has actually happened
-  while(!((RCC->CFGR >> 2) & sw));
-}
+void configureClock(void){
+    // Configure and turn on PLL
+    configurePLL();
 
-// Part 2
-void setAHBPrescaler(uint32_t hpre) {
-  // Write hpre into the HPRE field of RCC_CFGR, leaving the other bits alone
-    RCC->CFGR |= (hpre << 4);
-}
-
-// Part 3
-void configurePLL(uint32_t src, uint32_t m, uint32_t n, uint32_t r) {
-  // PLLCLK = (src / M) * N / R
-  // m, n, r are the actual divide/multiply ratios (e.g., r = 2 means divide by 2).
-  // Convert each one to the bit pattern its field expects.
-
-  // TODO: Turn off the PLL and wait until it has stopped
-
-  // TODO: Set the PLL input clock source (PLLSRC)
-
-  // TODO: Set M (PLLM)
-
-  // TODO: Set N (PLLN)
-
-  // TODO: Set R (PLLR)
-
-  // TODO: Enable the PLL's R output (PLLREN)
-
-  // TODO: Turn on the PLL and wait for it to lock
-
+    // Select PLL as clock source
+    RCC->CFGR |= (0b11 << 0);
+    while(!((RCC->CFGR >> 2) & 0b11));
 }
