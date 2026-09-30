@@ -7,8 +7,6 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-// Include the device header
-#include <stm32l432xx.h>
 
 // RM headers
 #include "STM32L432KC_GPIO.h"
