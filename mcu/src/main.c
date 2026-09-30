@@ -12,6 +12,8 @@
 #include "STM32L432KC_GPIO.h"
 #include "STM32L432KC_RCC.h"
 #include "STM32L432KC_FLASH.h"
+#include "STM32L432KC_TIM6.h"
+#include "STM32L432KC_TIM7.h"
 
 #define PIN_OUT 3 // PB3: green user LED (LD3) on the Nucleo-L432KC
 

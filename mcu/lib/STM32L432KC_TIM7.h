@@ -31,7 +31,9 @@ typedef struct
   __IO uint32_t DIER;             /*!< TIM6 interrupt enable register,                                Address offset: 0x0C */
   __IO uint32_t SR;               /*!< TIM6 status register,                                          Address offset: 0x10 */
   __IO uint32_t EGR;              /*!< TIM6 event generation register,                                Address offset: 0x14 */
-  uint32_t      RESERVED0;         /*!< Reserved,                                                      Address offset: 0x18 */
+  uint32_t      RESERVED0;        /*!< Reserved,                                                      Address offset: 0x18 */
+  uint32_t      RESERVED1;        /*!< Reserved,                                                      Address offset: 0x1C */
+  uint32_t      RESERVED2;        /*!< Reserved,                                                      Address offset: 0x20 */
   __IO uint32_t CNT;              /*!< TIM6 counter,                                                  Address offset: 0x24 */
   __IO uint32_t PSC;              /*!< TIM6 prescaler,                                                Address offset: 0x28 */
   __IO uint32_t ARR;              /*!< TIM6 auto-reload register,                                     Address offset: 0x2C */                      
