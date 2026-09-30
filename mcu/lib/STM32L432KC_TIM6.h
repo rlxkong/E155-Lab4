@@ -1,4 +1,7 @@
 // STM32L432KC_TIM6.h
+// Rebecca Kong
+// rkong@hmc.edu
+// 9/29/2026
 // Header for TIM6 functions
 
 #ifndef STM32L4_TIM6_H

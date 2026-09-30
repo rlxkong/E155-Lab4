@@ -1,6 +1,9 @@
-// lab4_starter.c
+// lab4_main.c
+// Rebecca Kong
+// rkong@hmc.edu
+// 9/29/2026
 // Fur Elise, E155 Lab 4
-// Updated Fall 2024
+
 
 #include <stdio.h>
 #include <stdlib.h>
