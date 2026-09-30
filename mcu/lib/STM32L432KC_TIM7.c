@@ -38,15 +38,15 @@ void runPitch(int frequency) {
 
     // Set ARR for given note
     // Subtract 1 as it takes one clock cycle to run
-    TIM6->ARR = note_count - 1;
+    TIM7->ARR = note_count - 1;
 
     // Run UG in EGR to register event and restart ARR
-    TIM6->EGR |= (1 << 0);
+    TIM7->EGR |= (1 << 0);
 
     // Since EGR forces update UIF is auto set to 1
     // Need to write 0 to prevent unnecessary interrupt flag
-    TIM6->SR &= ~(1 << 0);
+    TIM7->SR &= ~(1 << 0);
 
     // Internally enable counter
-    TIM6->CR1 |= (1 << 0);   
+    TIM7->CR1 |= (1 << 0);   
 }
