@@ -253,14 +253,14 @@ int main(void) {
   pinMode(PIN_OUT, GPIO_OUTPUT);
 
   // Output notes as waves
-  int score_length = sizeof(own_notes)/sizeof(own_notes[0]);
+  int score_length = sizeof(notes)/sizeof(notes[0]);
   // printf testing
   // printf("length %d!\n", score_length);
   for(int i = 0; i < score_length; i++){
     // play each note for a given duration
-    runDuration(own_notes[i][1]);
+    runDuration(notes[i][1]);
     // play the corresponding frequency
-    runPitch(own_notes[i][0]);
+    runPitch(notes[i][0]);
     // check that SR is 0 meaning no interrupt is pending
     while (!((TIM6->SR >> 0) & 1)){
       while (!((TIM7->SR >> 0) & 1)){}
