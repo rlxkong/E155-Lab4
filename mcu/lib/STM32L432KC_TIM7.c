@@ -1,51 +1,52 @@
-// STM32L432KC_TIM6.h
+// STM32L432KC_TIM7.c
 // Rebecca Kong
 // rkong@hmc.edu
 // 9/29/2026
-// Header for TIM6 functions
+// Source code for TIM7 functions
+// Pitch in Hz
 
-#ifndef STM32L4_TIM6_H
-#define STM32L4_TIM6_H
-
+// shadow register is like one clk signal of buffer
+#include "STM32L432KC_TIM7.h"
+#include "STM32L432KC_RCC.h"
 #include <stdint.h>
 
-///////////////////////////////////////////////////////////////////////////////
-// Definitions
-///////////////////////////////////////////////////////////////////////////////
+void enablePitch(void) {
+    // Enable TIM7 on upper levels
+    RCC->APB1ENR1 |= (1 << 5);
 
-#define __IO volatile
+    // Auto-reload preload enable (shadow register acting as one clk signal of buffer)
+    TIM7->CR1 |= (1 << 7);
 
-// Base addresses
-#define TIM6_BASE (0x40001000) // base address of TIM6
+    // Updates registers and resets counter given an overflow
+    // Forces new prescaler and auto-reload values
+    TIM7->EGR |= (1 << 0);
 
+    // Since EGR forces update UIF is auto set to 1
+    // Need to write 0 to prevent unnecessary interrupt flag
+    TIM7->SR &= ~(1 << 0);
 
-/**
-  * @brief Reset and Clock Control
-  */
+    // Internally enable counter
+    TIM7->CR1 |= (1 << 0);
+}
 
-typedef struct
-{
-  __IO uint32_t CR1;              /*!< TIM6 clock control register 1,                                 Address offset: 0x00 */
-  __IO uint32_t CR2;              /*!< TIM6 clock control register 2,                                 Address offset: 0x04 */
-  uint32_t      RESERVED;         /*!< Reserved,                                                      Address offset: 0x08 */
-  __IO uint32_t DIER;             /*!< TIM6 interrupt enable register,                                Address offset: 0x0C */
-  __IO uint32_t SR;               /*!< TIM6 status register,                                          Address offset: 0x10 */
-  __IO uint32_t EGR;              /*!< TIM6 event generation register,                                Address offset: 0x14 */
-  uint32_t      RESERVED0;        /*!< Reserved,                                                      Address offset: 0x18 */
-  uint32_t      RESERVED1;        /*!< Reserved,                                                      Address offset: 0x1C */
-  uint32_t      RESERVED2;        /*!< Reserved,                                                      Address offset: 0x20 */
-  __IO uint32_t CNT;              /*!< TIM6 counter,                                                  Address offset: 0x24 */
-  __IO uint32_t PSC;              /*!< TIM6 prescaler,                                                Address offset: 0x28 */
-  __IO uint32_t ARR;              /*!< TIM6 auto-reload register,                                     Address offset: 0x2C */                      
-} TIM6_TypeDef;
+void runPitch(int frequency) {
+    uint32_t note_count = 0;
 
-#define TIM6 ((TIM6_TypeDef *) TIM6_BASE)
+    if (frequency != 0){
+        note_count = 4000000 / (2 * frequency);
+    }
 
-///////////////////////////////////////////////////////////////////////////////
-// Function prototypes
-///////////////////////////////////////////////////////////////////////////////
+    // Set ARR for given note
+    // Subtract 1 as it takes one clock cycle to run
+    TIM7->ARR = note_count - 1;
 
-void enableDuration(void);
-void runDuration(int duration);
+    // Run UG in EGR to register event and restart ARR
+    TIM7->EGR |= (1 << 0);
 
-#endif
+    // Since EGR forces update UIF is auto set to 1
+    // Need to write 0 to prevent unnecessary interrupt flag
+    TIM7->SR &= ~(1 << 0);
+
+    // Internally enable counter
+    TIM7->CR1 |= (1 << 0);   
+}
